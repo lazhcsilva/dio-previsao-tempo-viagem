@@ -21,6 +21,9 @@ public class TravelServiceImpl implements TravelService {
 
     @Override
     public Iterable<Travel> getAllTravels() {
+        if (travelRepository.findAll() == null) {
+
+        }
         return travelRepository.findAll();
     }
 
