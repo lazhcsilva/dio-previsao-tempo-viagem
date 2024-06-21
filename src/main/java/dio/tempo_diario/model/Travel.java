@@ -10,8 +10,6 @@ public class Travel {
     private Long id;
     private String name;
     private String dateTravel;
-    @ManyToOne
-    private WeatherData weatherData;
 
     public Long getId() {
         return id;
@@ -37,11 +35,4 @@ public class Travel {
         this.dateTravel = dateTravel;
     }
 
-    public WeatherData getWeatherData() {
-        return weatherData;
-    }
-
-    public void setWeatherData(WeatherData weatherData) {
-        this.weatherData = weatherData;
-    }
 }
