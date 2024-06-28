@@ -5,6 +5,7 @@ import dio.tempo_diario.service.WeatherAPIService;
 import dio.tempo_diario.service.WeatherService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,26 +34,37 @@ public class WeatherServiceImpl implements WeatherService {
         Map<String, Object> forecast = (Map<String, Object>) originalResponse.get("forecast");
         Map<String, Object> forecastDay = ((List<Map<String, Object>>) forecast.get("forecastday")).get(0);
         Map<String, Object> day = (Map<String, Object>) forecastDay.get("day");
-        Map<String, Object> hour = ((List<Map<String, Object>>) forecastDay.get("hour")).get(0);
+        List<Map<String, Object>> hourList = (List<Map<String, Object>>) forecastDay.get("hour");
+
+        List<ForecastHourDTO> hourDTOList = new ArrayList<>();
+        mappingListHours(hourList, hourDTOList);
 
         ForecastDayDTO forecastDayDTO = new ForecastDayDTO(
                 Double.parseDouble(day.get("maxtemp_c").toString()),
                 Double.parseDouble(day.get("mintemp_c").toString()),
                 Double.parseDouble(day.get("avgtemp_c").toString()),
                 Double.parseDouble(day.get("avghumidity").toString()),
-                new ForecastHourDTO(hour.get("time").toString(),
-                        Double.parseDouble(hour.get("temp_c").toString()),
-                        ((Map<String, Object>)hour.get("condition")).get("text").toString(),
-                        Integer.parseInt(hour.get("humidity").toString()),
-                        Double.parseDouble(hour.get("feelslike_c").toString()),
-                        Double.parseDouble(hour.get("windchill_c").toString()),
-                        Double.parseDouble(hour.get("heatindex_c").toString()),
-                        Double.parseDouble(hour.get("chance_of_rain").toString()),
-                        Double.parseDouble(hour.get("uv").toString())
-                )
+                hourDTOList
         );
 
         return new ForecastDTO(forecastDay.get("date").toString(), forecastDayDTO);
+    }
+
+    private static void mappingListHours(List<Map<String, Object>> hourList, List<ForecastHourDTO> hourDTOList) {
+        for (Map<String, Object> hour : hourList) {
+            ForecastHourDTO forecastHourDTO = new ForecastHourDTO(
+                    hour.get("time").toString(),
+                    Double.parseDouble(hour.get("temp_c").toString()),
+                    ((Map<String, Object>)hour.get("condition")).get("text").toString(),
+                    Integer.parseInt(hour.get("humidity").toString()),
+                    Double.parseDouble(hour.get("feelslike_c").toString()),
+                    Double.parseDouble(hour.get("windchill_c").toString()),
+                    Double.parseDouble(hour.get("heatindex_c").toString()),
+                    Double.parseDouble(hour.get("chance_of_rain").toString()),
+                    Double.parseDouble(hour.get("uv").toString())
+            );
+            hourDTOList.add(forecastHourDTO);
+        }
     }
 
     private WeatherDTO mapToWeatherNowResponse(Map<String, Object> originalResponse) {
