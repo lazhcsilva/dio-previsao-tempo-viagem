@@ -29,7 +29,7 @@ public class TravelController {
     }
 
     @Operation(summary = "Insert new travel")
-    @PostMapping("/postTravel")
+    @PostMapping
     public ResponseEntity<Travel> insertTravel(@RequestBody Travel travel) {
         travelService.insertTravel(travel);
         return ResponseEntity.ok(travel);
