@@ -3,6 +3,7 @@ package dio.tempo_diario.service.impl;
 import dio.tempo_diario.dto.*;
 import dio.tempo_diario.service.WeatherAPIService;
 import dio.tempo_diario.service.WeatherService;
+import dio.tempo_diario.utils.Utils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,7 +27,8 @@ public class WeatherServiceImpl implements WeatherService {
 
     @Override
     public ForecastDTO getWeatherInFuture(String locale, String date) {
-        Map<String, Object> originalResponse = weatherAPIService.checkWeatherInFuture(key, locale, date);
+        String newDate = Utils.convertDate(date);
+        Map<String, Object> originalResponse = weatherAPIService.checkWeatherInFuture(key, locale, newDate);
         return mapToWeatherFutureResponse(originalResponse);
     }
 
