@@ -1,5 +1,6 @@
 package dio.tempo_diario.service.impl;
 
+import dio.tempo_diario.handler.BusinessException;
 import dio.tempo_diario.model.Travel;
 import dio.tempo_diario.repository.TravelRepository;
 import dio.tempo_diario.service.TravelService;
@@ -21,33 +22,42 @@ public class TravelServiceImpl implements TravelService {
 
     @Override
     public Iterable<Travel> getAllTravels() {
-        if (travelRepository.findAll() == null) {
-
+        Iterable<Travel> travels = travelRepository.findAll();
+        if (!travels.iterator().hasNext()) {
+            throw new BusinessException("No records saved.");
         }
-        return travelRepository.findAll();
+        return travels;
     }
 
     @Override
     public Travel getTravelById(Long id) {
         Optional<Travel> travel = travelRepository.findById(id);
+        if (travel.isEmpty()) {
+            throw new BusinessException("Id not found.");
+        }
         return travel.orElse(null);
     }
 
     @Override
     public void insertTravel(Travel travel) {
+        if (travel.getName() == null|| travel.getDateTravel() == null || travel.getCityName() == null) {
+            throw new BusinessException("You need to fill in your name, date and the name of the city.");
+        }
         travelRepository.save(travel);
     }
 
     @Override
     public void updateTravel(Long id, Travel travel) {
         Optional<Travel> travelDb = travelRepository.findById(id);
-        if (travelDb.isPresent()) {
-            travelRepository.save(travel);
+        if (travelDb.isEmpty()) {
+            throw new BusinessException("Id not found.");
         }
+        travelRepository.save(travel);
     }
 
     @Override
     public void deleteTravel(Long id) {
+        getTravelById(id);
         travelRepository.deleteById(id);
     }
 }

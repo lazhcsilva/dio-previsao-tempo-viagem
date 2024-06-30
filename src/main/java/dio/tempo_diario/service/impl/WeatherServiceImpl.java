@@ -1,9 +1,12 @@
 package dio.tempo_diario.service.impl;
 
 import dio.tempo_diario.dto.*;
+import dio.tempo_diario.handler.BusinessException;
 import dio.tempo_diario.service.WeatherAPIService;
 import dio.tempo_diario.service.WeatherService;
 import dio.tempo_diario.utils.Utils;
+import feign.FeignException;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,15 +24,57 @@ public class WeatherServiceImpl implements WeatherService {
 
     @Override
     public WeatherDTO getWeatherNow(String locale) {
-        Map<String, Object> originalResponse = weatherAPIService.checkWeatherNow(key, locale, aqi);
+        Map<String, Object> originalResponse = getStringObjectMap(locale);
         return mapToWeatherNowResponse(originalResponse);
     }
 
     @Override
     public ForecastDTO getWeatherInFuture(String locale, String date) {
         String newDate = Utils.convertDate(date);
-        Map<String, Object> originalResponse = weatherAPIService.checkWeatherInFuture(key, locale, newDate);
+
+        Map<String, Object> originalResponse = getStringObjectMap(locale, newDate);
+
         return mapToWeatherFutureResponse(originalResponse);
+    }
+
+    private Map<String, Object> getStringObjectMap(String locale) {
+        Map<String, Object> originalResponse;
+        try {
+            originalResponse = weatherAPIService.checkWeatherNow(key, locale, aqi);
+        } catch (FeignException e) {
+            String errorResponse = e.contentUTF8();
+            JSONObject jsonObject = new JSONObject(errorResponse);
+            JSONObject error = jsonObject.getJSONObject("error");
+            String errorMessage = error.getString("message");
+            throw new BusinessException(errorMessage);
+        }
+
+        if (originalResponse.containsKey("error")) {
+            Map<String, Object> error = (Map<String, Object>) originalResponse.get("error");
+            String errorMessage = (String) error.get("message");
+            throw new BusinessException(errorMessage);
+        }
+        return originalResponse;
+    }
+
+    private Map<String, Object> getStringObjectMap(String locale, String newDate) {
+        Map<String, Object> originalResponse;
+        try {
+            originalResponse = weatherAPIService.checkWeatherInFuture(key, locale, newDate);
+        } catch (FeignException e) {
+            String errorResponse = e.contentUTF8();
+            JSONObject jsonObject = new JSONObject(errorResponse);
+            JSONObject error = jsonObject.getJSONObject("error");
+            String errorMessage = error.getString("message");
+            throw new BusinessException(errorMessage);
+        }
+
+        if (originalResponse.containsKey("error")) {
+            Map<String, Object> error = (Map<String, Object>) originalResponse.get("error");
+            String errorMessage = (String) error.get("message");
+            throw new BusinessException(errorMessage);
+        }
+        return originalResponse;
     }
 
     private ForecastDTO mapToWeatherFutureResponse(Map<String, Object> originalResponse) {
@@ -85,7 +130,7 @@ public class WeatherServiceImpl implements WeatherService {
         return new WeatherDTO(locationDTO, weatherInfoDTO);
     }
 
-    private static final String key = "ad073ba3795d4cc49c043341241606";
+    private static final String key = "86dbef8eab204e7cb6070757243006";
     private static final String aqi = "no";
 
 }
