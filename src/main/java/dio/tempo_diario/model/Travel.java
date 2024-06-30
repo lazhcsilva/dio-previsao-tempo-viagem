@@ -9,6 +9,7 @@ public class Travel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String cityName;
     private String dateTravel;
 
     public Long getId() {
@@ -25,6 +26,14 @@ public class Travel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
     }
 
     public String getDateTravel() {
