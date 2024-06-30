@@ -130,7 +130,7 @@ public class WeatherServiceImpl implements WeatherService {
         return new WeatherDTO(locationDTO, weatherInfoDTO);
     }
 
-    private static final String key = "86dbef8eab204e7cb6070757243006";
+    private static final String key = "your-key-here";
     private static final String aqi = "no";
 
 }
