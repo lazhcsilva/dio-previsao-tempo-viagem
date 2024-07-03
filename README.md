@@ -29,7 +29,7 @@ spring.datasource.username=root
 spring.datasource.password=yourpassword
 spring.jpa.hibernate.ddl-auto=update
 ```
-## Maven dependence
+## Maven dependencies
 Make sure that the pom.xml file contains the following dependencies:
 ```xml
 <dependencies>
