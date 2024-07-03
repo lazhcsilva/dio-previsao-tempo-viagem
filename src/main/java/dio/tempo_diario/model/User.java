@@ -22,7 +22,7 @@ public class User {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "tab_user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role_id")
-    private List<String> roles = new ArrayList<>();
+    private final List<String> roles = new ArrayList<>();
 
     public Long getId() {
         return id;

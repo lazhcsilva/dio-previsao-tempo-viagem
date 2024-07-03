@@ -3,9 +3,9 @@ package dio.tempo_diario.utils;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class Utils {
+public class DateConverter {
 
-    public static String convertDate(String date) {
+    public static String convert(String date) {
         if (date.contains("/")) {
             date = date.replace('/', '-');
         }

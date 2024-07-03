@@ -13,11 +13,9 @@ import java.util.Optional;
 public class TravelServiceImpl implements TravelService {
 
     private final TravelRepository travelRepository;
-    private final WeatherService weatherService;
 
-    public TravelServiceImpl(TravelRepository travelRepository, WeatherService weatherService) {
+    public TravelServiceImpl(TravelRepository travelRepository) {
         this.travelRepository = travelRepository;
-        this.weatherService = weatherService;
     }
 
     @Override
@@ -32,10 +30,7 @@ public class TravelServiceImpl implements TravelService {
     @Override
     public Travel getTravelById(Long id) {
         Optional<Travel> travel = travelRepository.findById(id);
-        if (travel.isEmpty()) {
-            throw new BusinessException("Id not found.");
-        }
-        return travel.orElse(null);
+        return travel.orElseThrow(() -> new BusinessException("Id not Found."));
     }
 
     @Override
@@ -57,7 +52,7 @@ public class TravelServiceImpl implements TravelService {
 
     @Override
     public void deleteTravel(Long id) {
-        getTravelById(id);
-        travelRepository.deleteById(id);
+        Travel travel = getTravelById(id);
+        travelRepository.delete(travel);
     }
 }
